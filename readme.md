@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/koishi-plugin-osu-funny?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-osu-funny)
 
-一些好玩的和 osu 有关的插件，陆续推出更多功能...
+一些好玩的和 osu 有关的功能，陆续推出更多功能...
 
 ## 注意
 
