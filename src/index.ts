@@ -18,12 +18,13 @@ export const Config: Schema<Config> = Schema.object({
         .description('Osu! Oauth 应用密钥。')
         .role('secret')
         .required(),
-    selfUrl: Schema.string().description('应用暴露在公网的地址'),
+    selfUrl: Schema.string().role('url').description('应用暴露在公网的地址'),
 
     rootOsuId: Schema.string()
         .description(
             '优先使用其 token 的 osu! 用户名。（当未绑定用户查询时将使用此用户名的 token）'
         )
+
         .default('')
 })
 
@@ -72,8 +73,10 @@ export function apply(ctx: Context, config: Config) {
     ctx.plugin(
         {
             apply: commands,
-            inject: ['osu_funny']
+            inject: ['osu_funny', 'server']
         },
         config
     )
 }
+
+export const inject = ['cache', 'database', 'server']
