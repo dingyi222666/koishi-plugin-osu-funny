@@ -87,7 +87,7 @@ export default class OsuAPI {
             rule: '4',
             current: '1',
             pageSize: '100',
-            from: 'koishi_plugin_osu_funny',
+            from: 'koishi-plugin-osu-funny',
             hidePlayed: '0'
         })
 
