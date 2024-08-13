@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-osu-funny",
-  "description": "一些好玩的和 osu 有关的插件，陆续推出更多功能...",
+  "description": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能...",
   "version": "0.0.1",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -26,7 +26,8 @@
   ],
   "peerDependencies": {
     "@koishijs/plugin-server": "^3.2.3",
-    "koishi": "^4.17.10"
+    "koishi": "^4.17.10",
+    "@koishijs/cache": "^2.1.0"
   },
   "devDependencies": {
     "esbuild": "^0.20.2",
@@ -41,15 +42,19 @@
   },
   "koishi": {
     "description": {
-      "zh": "一些好玩的和 osu 有关的插件，陆续推出更多功能..."
+      "zh": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能..."
     },
     "service": {
       "required": [
         "database",
-        "server"
+        "server",
+        "cache"
       ]
     }
   },
   "repository": "git@github.com:dingyi222666/osu-funny.git",
-  "author": "dingyi222666 <dingyi222666@foxmail.com>"
+  "author": "dingyi222666 <dingyi222666@foxmail.com>",
+  "dependencies": {
+    "@isaacs/ttlcache": "^1.4.1"
+  }
 }

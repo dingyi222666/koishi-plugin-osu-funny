@@ -26,14 +26,50 @@ commands:
         usage: osu-funny.getbg <beatmap_id>
         examples: |-
             osu-funny.getbg https://osu.ppy.sh/beatmapsets/1846639#mania/3793375
-            
+
             osu-funny.getbg 3793375
         messages:
             no-beatmap: '找不到该谱面。'
             no-bg: '该谱面没有背景图。'
             invalid-beatmap-id: '输入了无效的 beatmap id。'
             get-bg-failed: '获取背景图时出现了错误。'
+    osu-funny.recommend:
+        description: 获取推荐的谱面（刷 PP 狂喜）。
+        usage: osu-funny.recommend [user:string] [mode:number] [mods:string] -f [boolean]
+        examples: |-
+            osu-funny.recommend 0
+            osu-funny.recommend 3 4k -f
 
-bind:
-    success-oauth: '已成功将 {0} 绑定到你的 osu! 账号，现在你可以继续使用 osu-funny。'
-    failed-oauth: '绑定时出现了错误，请联系管理员。'
+        options:
+            force: '是否强制刷新。'
+        messages:
+            no-username: '未指定用户。'
+            invalid-mode: '不支持的游戏模式。'
+            no-beatmap: '没有可推荐的图哦。多打打自己喜欢的图吧。'
+            no-recommend-beatmap: '今天已经没有可推荐的图了，明天再来吧。'
+            beatmap-recommend: |-
+                {cover}
+
+                {at} 推荐的谱面是：{name} {star}*
+
+                预计的 PP 为：{pp}
+                提升概率为：{percent}%
+                
+                {beatmap}
+
+
+    osu-funny.set-mode:
+        description: 设置默认游戏模式。
+        usage: osu-funny.set-mode <mode>
+        examples: |-
+            osu-funny.set-mode 0 # 设置为 std
+            osu-funny.set-mode 1 # 设置为 taiko
+            osu-funny.set-mode 2 # 设置为 ctb
+            osu-funny.set-mode 3 # 设置为 mania
+        messages:
+            set-mode-success: '已设置默认游戏模式为 {0}。'
+            invalid-mode: '输入了无效的游戏模式。'
+            not-bind: '该账号没有绑定任何 osu! 账号。'
+
+not-bind: '该账号没有绑定任何 osu! 账号。'
+unknown-error: '发生了未知错误。'

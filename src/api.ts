@@ -1,6 +1,6 @@
 import { Context, HTTP } from 'koishi'
 import { Config } from '.'
-import { OsuUserExtends } from './types'
+import { OsuModeString, OsuUserExtends, RecommendData } from './types'
 
 export default class OsuAPI {
     private _v2API: HTTP
@@ -24,6 +24,62 @@ export default class OsuAPI {
                 Accept: 'application/json'
             }
         })
+    }
+
+    async getV2User(
+        usernameOrId: string | number,
+        token: string,
+        mode?: OsuModeString
+    ) {
+        const user =
+            typeof usernameOrId === 'string' ? `@${usernameOrId}` : usernameOrId
+
+        let url = `users/${user}`
+
+        if (mode) {
+            url += `/${mode}`
+        }
+
+        return this._v2API.get<OsuUserExtends>(url, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+
+    async updateRecommendBeatmap(userId: number) {
+        await this.ctx.http.post(
+            'https://alphaosu.keytoix.vip/api/v1/self/users/synchronize',
+            {
+                headers: {
+                    uid: userId
+                }
+            }
+        )
+    }
+
+    getRecommendBeatmap(userId: number, keyCount: string, mode: number) {
+        const params = new URLSearchParams({
+            newRecordPercent: '0.2,1',
+            passPercent: '0.2,1',
+            difficulty: '0,15',
+            keyCount,
+            gameMode: mode.toString(),
+            rule: '4',
+            current: '1',
+            pageSize: '100',
+            from: 'koishi_plugin_osu_funny',
+            hidePlayed: '0'
+        })
+
+        return this.ctx.http.get<RecommendData>(
+            `https://alphaosu.keytoix.vip/api/v1/self/maps/recommend?${params.toString()}`,
+            {
+                headers: {
+                    uid: userId
+                }
+            }
+        )
     }
 
     async getMapBackground(mapId: string) {

@@ -1,12 +1,22 @@
 import { Context, Service } from 'koishi'
 import {} from '@koishijs/plugin-server'
+import {} from '@koishijs/cache'
 import { Config } from '.'
-import { OsuOauthResponse, OsuUserExtends } from './types'
+import { OsuOauthResponse, OsuScorePrediction, OsuUserExtends } from './types'
 import OsuAPI from './api'
-import { osuModeToNumber } from './utils'
+import { getDisplayOsuMode, osuModeToNumber } from './utils'
+import TTLCache from '@isaacs/ttlcache'
 
 export class OsuFunnyService extends Service {
     readonly _bindQueue: Map<string, string | OsuUserExtends> = new Map()
+    readonly _recommendCache: TTLCache<
+        number,
+        [OsuScorePrediction[], string[]]
+    > = new TTLCache({
+        max: 100,
+        ttl: 1000 * 60 * 60
+    })
+
     private API: OsuAPI
 
     constructor(
@@ -22,6 +32,96 @@ export class OsuFunnyService extends Service {
         return this.API.getMapBackground(beatMapId.toString())
     }
 
+    async setMode(platformId: string, mode: number) {
+        const user = await this.ctx.database.get('osu_funny_user', {
+            platform_id: platformId
+        })
+
+        if (user.length < 1) {
+            return
+        }
+
+        await this.ctx.database.upsert('osu_funny_user', [
+            {
+                platform_id: platformId,
+                mode
+            }
+        ])
+
+        return getDisplayOsuMode(mode)
+    }
+
+    async getRecommendBeatmap(
+        userId: number,
+        keyCount: string, // TODO: std support
+        mods: string,
+        mode: number,
+        force: boolean
+    ): Promise<[OsuScorePrediction | null, number]> {
+        let cache = this._recommendCache.get(userId)
+
+        if (cache == null || force) {
+            try {
+                const lastUpdatedTime = (await this.ctx.cache.get(
+                    'default',
+                    `recommendLastUpdated-${userId}`
+                )) as number
+                const now = Date.now()
+                if (
+                    lastUpdatedTime == null ||
+                    now - lastUpdatedTime > 1000 * 60 * 60 * 2
+                ) {
+                    await this.API.updateRecommendBeatmap(userId)
+                    await this.ctx.cache.set(
+                        'default',
+                        `recommendLastUpdated-${userId}`,
+                        now
+                    )
+                }
+
+                const recommendData = await this.API.getRecommendBeatmap(
+                    userId,
+                    keyCount,
+                    mode
+                )
+
+                if ((recommendData.data?.list?.length ?? 0) === 0) {
+                    // 1,玩的图太少了
+                    return [null, 1]
+                }
+                cache = [recommendData.data.list, []]
+                this._recommendCache.set(userId, cache)
+            } catch (e) {
+                this.ctx.logger.error(e)
+                // 3.未知错误
+                return [null, 3]
+            }
+        }
+
+        // 随机选择一个地图
+
+        const mapList = cache[0]
+        let map: OsuScorePrediction
+
+        if (cache[0].length === cache[1].length) {
+            // 推不了图了
+            return [null, 2]
+        }
+
+        // Select a random map that hasn't been selected before
+        while (true) {
+            const randomIndex = Math.floor(Math.random() * mapList.length)
+            map = mapList[randomIndex]
+
+            if (!cache[1].includes(map.id)) {
+                cache[1].push(map.id)
+                break
+            }
+        }
+
+        return [map, 0]
+    }
+
     async unbind(platformId: string, osuUserId: number) {
         await this.ctx.database.remove('osu_funny_user', {
             platform_id: platformId
@@ -31,16 +131,28 @@ export class OsuFunnyService extends Service {
         })
     }
 
-    async getUser(platformId: string) {
+    async getUserFromDatabase(platformId: string) {
         const user = await this.ctx.database.get('osu_funny_user', {
             platform_id: platformId
         })
 
-        if (!user) {
+        if (user.length < 1) {
             return null
         }
 
         return user[0]
+    }
+
+    async getUser(platformId: string, username: string, userId?: string) {
+        const users = await this.ctx.database.get('osu_funny_user', {
+            platform_id: platformId
+        })
+
+        if (users.length === 1) {
+            return this.API.getV2User(username, users[0].token)
+        }
+
+        throw new Error('Current no support v1 api')
     }
 
     getBindUrl(uid: string) {
@@ -133,7 +245,7 @@ export class OsuFunnyService extends Service {
         })
     }
 
-    static inject = ['server', 'database']
+    static inject = ['server', 'database', 'cache']
 }
 
 declare module 'koishi' {

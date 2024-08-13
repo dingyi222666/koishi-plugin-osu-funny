@@ -47,14 +47,18 @@ export function numberToOsuMode(mode: number): OsuModeString {
     }
 }
 
-export function getDisplayOsuMode(mode: OsuModeString): string {
+export function getDisplayOsuMode(mode: OsuModeString | number): string {
     switch (mode) {
+        case 0:
         case 'osu':
             return 'osu'
+        case 1:
         case 'taiko':
             return 'taiko'
+        case 2:
         case 'fruits':
             return 'catch'
+        case 3:
         case 'mania':
             return 'mania'
         default:
