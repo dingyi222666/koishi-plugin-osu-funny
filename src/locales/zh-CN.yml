@@ -1,13 +1,13 @@
 commands:
   osu-funny.bind:
-    description: 绑定一个 osu! 账号
+    description: 绑定一个 osu! 账号。
     usage: osu-funny.bind
     examples: |-
       osu-funny.bind
     messages:
-      go-oauth: "请前往 {0} 授权以绑定你的 osu! 账号"
+      go-oauth: "请前往 {0} 授权以绑定你的 osu! 账号。"
       timeout: "绑定超时，请重新绑定。"
-      success: "已绑定到 {0}"
+      success: "已绑定到 {0}，默认设置为 {1} 游戏模式。如需更新游戏模式，请使用 `osu-funny.mode` 命令。"
       already-bind: "该账号已经绑定了一个 osu! 账号！请使用 `osu-funny.unbind` 来解绑。"
       error: "绑定时出现了错误。"
 
