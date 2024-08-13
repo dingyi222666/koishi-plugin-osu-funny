@@ -2,21 +2,43 @@
   "name": "koishi-plugin-osu-funny",
   "description": "一些好玩的和 osu 有关的插件，陆续推出更多功能...",
   "version": "0.0.1",
-  "main": "lib/index.js",
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs",
+      "types": "./lib/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "type": "module",
   "files": [
     "lib",
     "dist"
   ],
   "license": "MIT",
-  "scripts": {},
   "keywords": [
     "chatbot",
     "koishi",
     "plugin"
   ],
-  "devDependencies": {},
   "peerDependencies": {
+    "@koishijs/plugin-server": "^3.2.3",
     "koishi": "^4.17.10"
-  }
+  },
+  "koishi": {
+    "description": {
+      "zh": "一些好玩的和 osu 有关的插件，陆续推出更多功能..."
+    },
+    "service": {
+      "required": [
+        "database",
+        "server"
+      ]
+    }
+  },
+  "repository": "git@github.com:dingyi222666/osu-funny.git",
+  "author": "dingyi222666 <dingyi222666@foxmail.com>"
 }
