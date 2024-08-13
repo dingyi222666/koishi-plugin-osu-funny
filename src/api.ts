@@ -1,24 +1,23 @@
 import { Context, HTTP } from 'koishi'
 import { Config } from '.'
-import { OsuModeString, OsuUserExtends, RecommendData } from './types'
+import {
+    OsuModeString,
+    OsuScore,
+    OsuUserExtends,
+    OsuV1Score,
+    RecommendData
+} from './types'
+import { numberToOsuMode } from './utils'
 
 export default class OsuAPI {
-    private _v2API: HTTP
-    private _v1API: HTTP
+    private _http: HTTP
 
     constructor(
         private readonly ctx: Context,
         private readonly _config: Config
     ) {
-        this._v2API = ctx.http.extend({
+        this._http = ctx.http.extend({
             baseURL: 'https://osu.ppy.sh/api/v2/',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            }
-        })
-        this._v1API = ctx.http.extend({
-            baseURL: 'https://osu.ppy.sh/api/',
             headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
@@ -40,11 +39,31 @@ export default class OsuAPI {
             url += `/${mode}`
         }
 
-        return this._v2API.get<OsuUserExtends>(url, {
+        return this._http.get<OsuUserExtends>(url, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
+    }
+
+    async getBestPlayScores(
+        userId: number | string,
+        limit: number = 100,
+        mode: number = 0,
+        token?: string
+    ): Promise<OsuScore[] | OsuV1Score[]> {
+        if (typeof userId === 'string') {
+            userId = await this.getV2User(userId, token).then((user) => user.id)
+        }
+
+        return this._http.get<OsuScore[]>(
+            `users/${userId}/scores/best?limit=${limit}&mode=${numberToOsuMode(mode)}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
     }
 
     async updateRecommendBeatmap(userId: number) {
@@ -118,7 +137,7 @@ export default class OsuAPI {
      * @returns
      */
     getMe(token: string): Promise<OsuUserExtends> {
-        return this._v2API.get<OsuUserExtends>('me', {
+        return this._http.get<OsuUserExtends>('me', {
             headers: {
                 Authorization: `Bearer ${token}`
             }

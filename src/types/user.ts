@@ -1,30 +1,4 @@
-export interface OsuUserInfo {
-    username: string
-    platform_id: string
-    user_id: number
-    token: string
-    refresh_token: string
-    expires_in: number
-    // std taiko catch mania
-    mode: OsuMode
-}
-
-export enum OsuMode {
-    std = 0,
-    taiko = 1,
-    catch = 2,
-    mania = 3
-}
-
-export type OsuModeString = 'osu' | 'taiko' | 'fruits' | 'mania'
-
-export interface OsuOauthResponse {
-    access_token: string
-    expires_in: number
-    refresh_token: string
-
-    token_type: 'Bearer'
-}
+import { OsuModeString } from './database'
 
 /**  {
   "id": 2,
@@ -50,70 +24,6 @@ export interface OsuUser {
     is_bot: boolean
 }
 
-/** {
-    "id": "4294726/NM/4/3",
-    "mapName": "HALL - [4K] NULL",
-    "mapLink": "https://osu.ppy.sh/beatmaps/4294726",
-    "mapCoverUrl": "https://assets.ppy.sh/beatmaps/2055332/covers/cover.jpg",
-    "mod": [
-        "NM"
-    ],
-    "difficulty": 8.28,
-    "keyCount": 4,
-    "currentAccuracy": 0.9504745478640475,
-    "currentSpeed": -1,
-    "currentMod": [
-        "HT"
-    ],
-    "currentAccuracyLink": "https://osu.ppy.sh/scores/mania/578218870",
-    "currentPP": 395.5611354855541,
-    "predictAccuracy": 0.9060762004071621,
-    "predictPP": 469.10475155968277,
-    "newRecordPercent": 1,
-    "ppIncrement": 52.50081302611852,
-    "passPercent": 0.5591099858283997,
-    "ppIncrementExpect": 29.35372882701259,
-    "accurate": true
-} */
-export interface OsuScorePrediction {
-    id: string
-    mapName: string
-    mapLink: string
-    mapCoverUrl: string
-    mod: string[]
-    difficulty: number
-    keyCount: number
-    currentAccuracy: number
-    currentSpeed: number
-    currentMod: string[]
-    currentAccuracyLink: string
-    currentPP: number
-    predictAccuracy: number
-    predictPP: number
-    newRecordPercent: number
-    ppIncrement: number
-    passPercent: number
-    ppIncrementExpect: number
-    accurate: boolean
-}
-
-// Define the Data interface
-export interface Data {
-    next: number
-    prev: number
-    total: number
-    list: OsuScorePrediction[]
-}
-
-// Define the RecommendData interface
-export interface RecommendData {
-    code: number
-    message: string
-    success: boolean
-    data?: Data | null // Optional Data object or null
-}
-
-export type Mod = string
 export interface OsuUserExtends {
     avatar_url: string
     country_code: string
@@ -265,11 +175,4 @@ interface UserAchievement {
 interface RankHistory {
     mode: string
     data: number[]
-}
-
-declare module 'koishi' {
-    interface Tables {
-        osu_funny_user: OsuUserInfo
-        osu_funny_real_user: OsuUser
-    }
 }

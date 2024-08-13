@@ -8,7 +8,7 @@ export const name = 'osu-funny'
 export interface Config {
     clientId: string
     clientSecret: string
-    apiKey: string
+    rootOsuId: string
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -17,10 +17,11 @@ export const Config: Schema<Config> = Schema.object({
         .description('Osu! Oauth 应用密钥。')
         .role('secret')
         .required(),
-    apiKey: Schema.string()
-        .description('Osu! v1 的 API Key（即旧版本 API Key）。')
-        .role('secret')
-        .default(null)
+    rootOsuId: Schema.string()
+        .description(
+            '优先使用其 token 的 osu! 用户名。（当未绑定用户查询时将使用此用户名的 token）'
+        )
+        .default('')
 })
 
 export const usage = `
@@ -39,7 +40,6 @@ http://xxxx.top:5140/osu-funny/oauth
 
 创建好后将上面的 clientId 和 clientSecret 填写到下面的配置文件中即可。
 
-你可以选择不填写上面的 apiKey，但是不填写的话，插件将无法使用旧版本 API。（可能无法查询他人用户信息）
 
 ## 其他
 注意作者本人只玩 mania 模式，其他模式可能适配不太好（

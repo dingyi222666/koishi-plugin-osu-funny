@@ -6,13 +6,13 @@
 
 ## 注意
 
-本插件同时使用 osu v1 api 和 osu v2 api（绑定使用 v2 api），因此请确保你的 Koishi 部署在公网。
+本插件只使用 osu v2 api（绑定使用 v2 api），因此请确保你的 Koishi 部署在公网。
 
 ## 目前支持的功能(没打勾就是没做)
 
-- [ ] 获取一首谱面的背景
-- [ ] 根据 (std/mania) pp 值获取推荐的谱面（alphaosu）
-- [ ] 从音频猜歌（根据 bp 列表）
+- [x] 获取一首谱面的背景
+- [x] 根据 (only mania) pp 值获取推荐的谱面（alphaosu）
+- [x] 从音频猜歌（根据 bp 列表）
 
 ## 未来
 

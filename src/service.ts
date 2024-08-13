@@ -2,10 +2,12 @@ import { Context, Service } from 'koishi'
 import {} from '@koishijs/plugin-server'
 import {} from '@koishijs/cache'
 import { Config } from '.'
-import { OsuOauthResponse, OsuScorePrediction, OsuUserExtends } from './types'
 import OsuAPI from './api'
 import { getDisplayOsuMode, osuModeToNumber } from './utils'
 import TTLCache from '@isaacs/ttlcache'
+import { OsuScorePrediction } from './types/alpha_osu'
+import { OsuUserExtends } from './types/user'
+import { OsuOauthResponse } from './types/oauth'
 
 export class OsuFunnyService extends Service {
     readonly _bindQueue: Map<string, string | OsuUserExtends> = new Map()
@@ -17,7 +19,7 @@ export class OsuFunnyService extends Service {
         ttl: 1000 * 60 * 60
     })
 
-    private API: OsuAPI
+    API: OsuAPI
 
     constructor(
         public ctx: Context,
@@ -49,6 +51,16 @@ export class OsuFunnyService extends Service {
         ])
 
         return getDisplayOsuMode(mode)
+    }
+
+    async getBestPlayScores(
+        usernameOrId: string | number,
+        mode: number,
+        limit: number,
+        token?: string
+    ) {
+        token = token ?? (await this.getDefaultToken())
+        return this.API.getBestPlayScores(usernameOrId, limit, mode, token)
     }
 
     async getRecommendBeatmap(
@@ -148,11 +160,21 @@ export class OsuFunnyService extends Service {
             platform_id: platformId
         })
 
-        if (users.length === 1) {
-            return this.API.getV2User(username, users[0].token)
+        const token = users?.[0].token ?? (await this.getDefaultToken())
+
+        return this.API.getV2User(username, token)
+    }
+
+    async getDefaultToken() {
+        const user = await this.ctx.database.get('osu_funny_user', {
+            username: this.config.rootOsuId
+        })
+
+        if (user.length < 1) {
+            throw new Error('not found the root osu id')
         }
 
-        throw new Error('Current no support v1 api')
+        return user[0].token
     }
 
     getBindUrl(uid: string) {

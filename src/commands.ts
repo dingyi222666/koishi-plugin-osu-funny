@@ -1,6 +1,7 @@
 import { Context, h } from 'koishi'
 import { Config } from '.'
 import { getDisplayOsuMode, withResolver } from './utils'
+import { OsuBeatmapset, OsuScore } from './types'
 
 export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny.bind').action(async ({ session }) => {
@@ -117,6 +118,62 @@ export function apply(ctx: Context, config: Config) {
             return h.image(`data:image/png;base64,${beatMapBase64}`)
         }
     )
+
+    ctx.command('osu-funny.guess-voice [user:string]')
+        .option('type', '-t <t:number>')
+        .action(async ({ session, options }, username) => {
+            const selfId = session.selfId
+            const user = await ctx.osu_funny.getUserFromDatabase(selfId)
+            let mode = options.type
+
+            if (user && !username) {
+                username = user.username
+                mode = mode ?? user.mode
+            }
+
+            if (!username) {
+                return session.text('.no-username')
+            }
+
+            const scores = await ctx.osu_funny.getBestPlayScores(
+                username,
+                mode,
+                100,
+                user?.token
+            )
+
+            // random score
+            const score = scores[Math.floor(Math.random() * scores.length)]
+
+            let beatmapset: OsuBeatmapset
+            // get beatmap id
+            if (score?.['beatmap'] != null) {
+                beatmapset = (score as OsuScore).beatmapset
+            } else {
+                return session.text('no-supported')
+            }
+
+            session.send(
+                session.text('.prompt', [username, getDisplayOsuMode(mode)])
+            )
+
+            session.send(h.audio('https:' + beatmapset.preview_url))
+
+            const input = await session.prompt(1000 * 60)
+
+            if (input == null) {
+                return session.text('.timeout', [beatmapset.title_unicode])
+            }
+
+            if (
+                beatmapset.title.includes(input) ||
+                beatmapset.title_unicode.includes(input)
+            ) {
+                return session.text('.success', [beatmapset.title_unicode])
+            } else {
+                return session.text('.fail', [beatmapset.title_unicode])
+            }
+        })
 
     ctx.command('osu-funny.recommend [user:string]')
         .option('force', '-f <f:boolean>')

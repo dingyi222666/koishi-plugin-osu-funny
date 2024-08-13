@@ -1,4 +1,4 @@
-import { OsuMode, OsuModeString } from './types'
+import { OsuMode, OsuModeString } from './types/database'
 
 // https://github.com/tc39/proposal-promise-with-resolvers
 export interface Resolver<R = void, E = unknown> {

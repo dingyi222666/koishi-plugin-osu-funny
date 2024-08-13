@@ -52,11 +52,26 @@ commands:
 
                 {at} 推荐的谱面是：{name} {star}*
 
-                预计的 PP 为：{pp}
-                提升概率为：{percent}%
-                
-                {beatmap}
+                预计的 PP 为：{pp}。
+                提升概率为：{percent}%。
 
+                谱面地址：{beatmap}
+
+    osu-funny.guess-voice:
+        description: 在你的 BP 列表中随机选择一张谱面，给出语音猜谱面。
+        usage: osu-funny.guess-voice
+        examples:
+            - osu-funny.guess-voice peppy
+            - osu-funny.guess-voice bojii -t 3
+        options:
+            type: '设置游戏模式。'
+        messages:
+            no-username: 未指定用户。
+            no-beatmap: 没有可用的谱面。你的 BP 列表为空。
+            prompt: 开始音频猜歌游戏吧！猜猜下面音频的曲名，该曲抽选自 {0} 的 {1} 的最好成绩。
+            timeout: '猜歌超时，游戏结束。正确答案是 {0}。'
+            success: '恭喜你猜对了！正确答案是 {0}。'
+            fail: '很遗憾你猜错了，游戏结束。正确答案是 {0}。'
 
     osu-funny.set-mode:
         description: 设置默认游戏模式。
@@ -73,3 +88,4 @@ commands:
 
 not-bind: '该账号没有绑定任何 osu! 账号。'
 unknown-error: '发生了未知错误。'
+no-supported: '暂时不支持 V1 API 调用，请尝试绑定一个 osu! 账号。'
