@@ -15,7 +15,32 @@ export class OsuFunnyService extends Service {
     ) {
         super(ctx, 'osu_funny')
         this._listenerCallback()
-        this.API = new OsuAPI(this.ctx.http, this.config)
+        this.API = new OsuAPI(this.ctx, this.config)
+    }
+
+    async getBeatMapCover(beatMapId: number) {
+        return this.API.getMapBackground(beatMapId.toString())
+    }
+
+    async unbind(platformId: string, osuUserId: number) {
+        await this.ctx.database.remove('osu_funny_user', {
+            platform_id: platformId
+        })
+        await this.ctx.database.remove('osu_funny_real_user', {
+            id: osuUserId
+        })
+    }
+
+    async getUser(platformId: string) {
+        const user = await this.ctx.database.get('osu_funny_user', {
+            platform_id: platformId
+        })
+
+        if (!user) {
+            return null
+        }
+
+        return user[0]
     }
 
     getBindUrl(uid: string) {

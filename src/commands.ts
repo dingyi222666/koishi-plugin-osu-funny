@@ -1,10 +1,16 @@
-import { Context } from 'koishi'
+import { Context, h } from 'koishi'
 import { Config } from '.'
 import { getDisplayOsuMode, withResolver } from './utils'
 
 export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny.bind', '绑定osu账号').action(async ({ session }) => {
         const selfId = session.selfId
+
+        const user = await ctx.osu_funny.getUser(selfId)
+
+        if (user) {
+            return session.text('.already-bind-v2')
+        }
 
         const url = ctx.osu_funny.getBindUrl(selfId)
 
@@ -64,4 +70,52 @@ export function apply(ctx: Context, config: Config) {
 
         await promise
     })
+
+    ctx.command('osu-funny.unbind', '解绑osu账号').action(
+        async ({ session }) => {
+            const selfId = session.selfId
+
+            const user = await ctx.osu_funny.getUser(selfId)
+
+            if (!user) {
+                return session.text('.not-bind')
+            }
+
+            await session.send(session.text('.unbind-confirm', [user.username]))
+
+            const prompt = await session.prompt()
+
+            if (!prompt) {
+                return session.text('.unbind-cancel')
+            }
+
+            await ctx.osu_funny.unbind(selfId, user.user_id)
+
+            return session.text('.unbind-success')
+        }
+    )
+
+    ctx.command('osu-funny.getbg <beatmapId: string>', '获取osu背景').action(
+        async ({ session }, beatmapId) => {
+            if (beatmapId.includes('osu.ppy.sh/beatmapsets')) {
+                // https://osu.ppy.sh/beatmapsets/2017611#mania/4200599
+                // get 4200959
+                beatmapId = beatmapId.match(/\/beatmapsets\/\d+#\w+\/(\d+)/)[1]
+            }
+            // check is number
+            if (!/^\d+$/.test(beatmapId)) {
+                return session.text('.invalid-beatmap-id')
+            }
+
+            const beatMapBase64 = await ctx.osu_funny.getBeatMapCover(
+                parseInt(beatmapId)
+            )
+
+            if (!beatMapBase64) {
+                return session.text('.get-bg-failed')
+            }
+
+            return h.image(`data:image/png;base64,${beatMapBase64}`)
+        }
+    )
 }
