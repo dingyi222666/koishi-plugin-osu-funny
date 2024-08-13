@@ -48,8 +48,9 @@ http://xxxx.top:5140/osu-funny/oauth
 ## 支持的功能
 
 - [x] 获取一首谱面的背景
-- [x] 根据你的 (only mania) 的 bp 列表获取推荐的谱面（alphaosu）
+- [x] 根据你的 bp 列表获取推荐的谱面（alphaosu）
 - [x] 从音频猜歌（根据 bp 列表）
+- [x] 获取用户信息（文字版）
 
 ## 其他
 注意作者本人只玩 mania 模式，其他模式可能适配不太好（
