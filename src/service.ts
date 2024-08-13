@@ -12,7 +12,7 @@ import { OsuOauthResponse } from './types/oauth'
 export class OsuFunnyService extends Service {
     readonly _bindQueue: Map<string, string | OsuUserExtends> = new Map()
     readonly _recommendCache: TTLCache<
-        number,
+        string,
         [OsuScorePrediction[], string[]]
     > = new TTLCache({
         max: 100,
@@ -65,12 +65,13 @@ export class OsuFunnyService extends Service {
 
     async getRecommendBeatmap(
         userId: number,
-        keyCount: string, // TODO: std support
+        keyCount: string,
         mods: string,
         mode: number,
         force: boolean
     ): Promise<[OsuScorePrediction | null, number]> {
-        let cache = this._recommendCache.get(userId)
+        const key = `${userId}-${mode}`
+        let cache = this._recommendCache.get(key)
 
         if (cache == null || force) {
             try {
@@ -94,7 +95,8 @@ export class OsuFunnyService extends Service {
                 const recommendData = await this.API.getRecommendBeatmap(
                     userId,
                     keyCount,
-                    mode
+                    mode,
+                    mods
                 )
 
                 if ((recommendData.data?.list?.length ?? 0) === 0) {
@@ -102,7 +104,7 @@ export class OsuFunnyService extends Service {
                     return [null, 1]
                 }
                 cache = [recommendData.data.list, []]
-                this._recommendCache.set(userId, cache)
+                this._recommendCache.set(key, cache)
             } catch (e) {
                 this.ctx.logger.error(e)
                 // 3.未知错误

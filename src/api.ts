@@ -77,14 +77,20 @@ export default class OsuAPI {
         )
     }
 
-    getRecommendBeatmap(userId: number, keyCount: string, mode: number) {
+    getRecommendBeatmap(
+        userId: number,
+        keyCount: string,
+        gameMode: number,
+        mod: string = ''
+    ) {
         const params = new URLSearchParams({
             newRecordPercent: '0.2,1',
             passPercent: '0.2,1',
             difficulty: '0,15',
             keyCount,
-            gameMode: mode.toString(),
+            gameMode: gameMode.toString(),
             rule: '4',
+            mod,
             current: '1',
             pageSize: '100',
             from: 'koishi-plugin-osu-funny',

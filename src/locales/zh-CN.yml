@@ -35,13 +35,16 @@ commands:
             get-bg-failed: '获取背景图时出现了错误。'
     osu-funny.recommend:
         description: 获取推荐的谱面（刷 PP 狂喜）。
-        usage: osu-funny.recommend [user:string] [mode:number] [mods:string] -f [boolean]
+        usage: osu-funny.recommend [user:string] -m [mods] -t [type] -f [boolean]
         examples: |-
-            osu-funny.recommend 0
-            osu-funny.recommend 3 4k -f
+            osu-funny.recommend
+            osu-funny.recommend -m 7K -t 3
+            osu-funny.recommend -t 0 -m HD,HD+HR,DT+HD+HR
 
         options:
             force: '是否强制刷新。'
+            mods: '要选择的 mods。'
+            type: '选择的游戏类型（只支持 1 和 3）。'
         messages:
             no-username: '未指定用户。'
             invalid-mode: '不支持的游戏模式。'
