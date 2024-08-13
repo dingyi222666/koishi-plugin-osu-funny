@@ -180,7 +180,7 @@ export class OsuFunnyService extends Service {
     getBindUrl(uid: string) {
         this._bindQueue.set(uid, uid)
         // eslint-disable-next-line max-len
-        return `https://osu.ppy.sh/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.ctx.server.config.selfUrl}/osu-funny/oauth&response_type=code&scope=friends.read%20identify%20public&state=${uid}`
+        return `https://osu.ppy.sh/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.selfUrl}/osu-funny/oauth&response_type=code&scope=friends.read%20identify%20public&state=${uid}`
     }
 
     private _listenerCallback() {

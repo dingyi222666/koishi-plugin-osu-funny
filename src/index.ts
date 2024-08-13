@@ -9,6 +9,7 @@ export interface Config {
     clientId: string
     clientSecret: string
     rootOsuId: string
+    selfUrl: string
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -17,6 +18,8 @@ export const Config: Schema<Config> = Schema.object({
         .description('Osu! Oauth 应用密钥。')
         .role('secret')
         .required(),
+    selfUrl: Schema.string().description('应用暴露在公网的地址'),
+
     rootOsuId: Schema.string()
         .description(
             '优先使用其 token 的 osu! 用户名。（当未绑定用户查询时将使用此用户名的 token）'
@@ -31,7 +34,8 @@ export const usage = `
 
 你需要前往 https://osu.ppy.sh/home/account/edit#oauth 创建一个应用，并填写相关信息。
 
-注意回调地址，填写你的 Koishi 公网访问地址，后加 /osu-funny/oauth
+
+注意回调地址，填写你的 Koishi 公网访问地址(为下面 selfUrl 的地址)，后加 /osu-funny/oauth
 
 格式为：http://你的 Koishi 公网域名:Koishi端口/osu-funny/oauth
 
@@ -54,6 +58,7 @@ http://xxxx.top:5140/osu-funny/oauth
 export function apply(ctx: Context, config: Config) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     ctx.i18n.define('zh-CN', require('./locales/zh-CN'))
+    config.selfUrl = config.selfUrl || ctx.server.config.selfUrl
 
     ctx.plugin(OsuFunnyService, config)
     ctx.plugin(

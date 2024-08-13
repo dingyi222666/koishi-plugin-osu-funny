@@ -12,8 +12,8 @@ export function apply(ctx: Context, config: Config) {
                 type: 'integer',
                 initial: 0
             },
-            token: 'string',
-            refresh_token: 'string',
+            token: 'text',
+            refresh_token: 'text',
             expires_in: 'integer'
         },
         {
