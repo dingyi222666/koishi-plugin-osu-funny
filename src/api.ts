@@ -25,7 +25,7 @@ export default class OsuAPI {
         })
     }
 
-    async getV2User(
+    async getUser(
         usernameOrId: string | number,
         token: string,
         mode?: OsuModeString
@@ -53,7 +53,7 @@ export default class OsuAPI {
         token?: string
     ): Promise<OsuScore[] | OsuV1Score[]> {
         if (typeof userId === 'string') {
-            userId = await this.getV2User(userId, token).then((user) => user.id)
+            userId = await this.getUser(userId, token).then((user) => user.id)
         }
 
         return this._http.get<OsuScore[]>(

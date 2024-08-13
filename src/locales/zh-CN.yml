@@ -73,14 +73,14 @@ commands:
             no-beatmap: 没有可用的谱面。你的 BP 列表为空。
             prompt: 开始音频猜歌游戏吧！猜猜下面音频的曲名，该曲抽选自 {0} 在 {1} 模式的最好成绩。
             timeout: |-
-              {0}
-              猜歌超时，游戏结束。正确答案是 {1}。
+                {0}
+                猜歌超时，游戏结束。正确答案是 {1}。
             success: |-
-              {0}
-              恭喜你猜对了！正确答案是 {1}。
+                {0}
+                恭喜你猜对了！正确答案是 {1}。
             fail: |-
-              {0}
-              很遗憾你猜错了，游戏结束。正确答案是 {1}。
+                {0}
+                很遗憾你猜错了，游戏结束。正确答案是 {1}。
 
     osu-funny.set-mode:
         description: 设置默认游戏模式。
@@ -93,8 +93,33 @@ commands:
         messages:
             set-mode-success: '已设置默认游戏模式为 {0}。'
             invalid-mode: '输入了无效的游戏模式。'
-            not-bind: '该账号没有绑定任何 osu! 账号。'
+            not-bind: '你还没有绑定任何 osu! 账号。'
 
-not-bind: '该账号没有绑定任何 osu! 账号。'
+    osu-funny.info:
+        description: 获取一个 osu! 账号的信息。
+        usage: osu-funny.info [user:string] -t [type]
+        examples: |-
+            osu-funny.info peppy
+            osu-funny.info peppy -t 3
+        messages:
+            user-info: |-
+                {avatar_url}
+                {username} ({playmode}): {Math.round(statistics.pp)}PP
+                #{statistics.global_rank ?? "??"} {country_code}#{statistics.country_rank ?? "??"}
+
+                Play Count: {statistics.play_count}
+                Total Hits: {statistics.total_hits}
+                Total Play Time: {play_time} ({play_time_hours})
+                Hit Accuracy: {Math.round(statistics.hit_accuracy * 100)/100}%
+                Level: {statistics.level.current}.{statistics.level.progress}
+
+                ♡: {follower_count}
+                SS: {statistics.grade_counts.ss}({statistics.grade_counts.ssh}) S: {statistics.grade_counts.s}({statistics.grade_counts.sh}) A: {statistics.grade_counts.a}
+
+                uid: {id}
+                interests: {interests}
+
+
+not-bind: '你还没有绑定任何 osu! 账号。'
 unknown-error: '发生了未知错误。'
 no-supported: '暂时不支持 V1 API 调用，请尝试绑定一个 osu! 账号。'

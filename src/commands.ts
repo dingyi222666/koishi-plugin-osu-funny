@@ -1,9 +1,16 @@
 import { Context, h } from 'koishi'
 import { Config } from '.'
-import { getDisplayOsuMode, withResolver } from './utils'
+import {
+    formatTimeToDay,
+    formatTimeToHours,
+    getDisplayOsuMode,
+    withResolver
+} from './utils'
 import { OsuBeatmapset, OsuScore } from './types'
 
 export function apply(ctx: Context, config: Config) {
+    ctx.command('osu-funny', '一些有趣的 osu! 功能')
+
     ctx.command('osu-funny.bind').action(async ({ session }) => {
         const selfId = session.selfId
 
@@ -280,4 +287,43 @@ export function apply(ctx: Context, config: Config) {
             return session.text('.current-mode', [displayMode])
         }
     )
+
+    ctx.command('osu-funny.info [username:string]')
+        .option('type', '-t <t:number>')
+        .action(async ({ session, options }, username) => {
+            const user = await ctx.osu_funny.getUserFromDatabase(session.selfId)
+
+            if (!user && !username) {
+                return session.text('not-bind')
+            }
+
+            username = username ?? user?.username
+
+            const mode = options.type ?? user?.mode ?? 0
+
+            try {
+                const osuUser = await ctx.osu_funny.getUser(
+                    session.selfId,
+                    username,
+                    mode
+                )
+
+                return session.text(
+                    '.user-info',
+                    Object.assign({}, osuUser, {
+                        avatar_url: h.image(osuUser.avatar_url),
+                        playmode: getDisplayOsuMode(mode),
+                        play_time: formatTimeToDay(
+                            osuUser.statistics.play_time
+                        ),
+                        play_time_hours: formatTimeToHours(
+                            osuUser.statistics.play_time
+                        )
+                    })
+                )
+            } catch (e) {
+                ctx.logger.error(e)
+                return session.text('unknown-error')
+            }
+        })
 }

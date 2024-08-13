@@ -47,6 +47,20 @@ export function numberToOsuMode(mode: number): OsuModeString {
     }
 }
 
+export function formatTimeToDay(time: number) {
+    return time / 86400 > 1
+        ? `${Math.floor(time / 86400)}d ${Math.floor(
+              (time % 86400) / 3600
+          )}h ${Math.floor((time % 3600) / 60)}m`
+        : `${Math.floor(time / 3600)}h ${Math.floor((time % 3600) / 60)}m`
+}
+
+export function formatTimeToHours(time: number) {
+    return time / 3600 > 1
+        ? `${Math.floor(time / 3600)}h ${Math.floor((time % 3600) / 60)}m`
+        : `${Math.floor(time / 60)}m`
+}
+
 export function getDisplayOsuMode(mode: OsuModeString | number): string {
     switch (mode) {
         case 0:

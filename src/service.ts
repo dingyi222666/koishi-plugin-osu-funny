@@ -3,7 +3,7 @@ import {} from '@koishijs/plugin-server'
 import {} from '@koishijs/cache'
 import { Config } from '.'
 import OsuAPI from './api'
-import { getDisplayOsuMode, osuModeToNumber } from './utils'
+import { getDisplayOsuMode, numberToOsuMode, osuModeToNumber } from './utils'
 import TTLCache from '@isaacs/ttlcache'
 import { OsuScorePrediction } from './types/alpha_osu'
 import { OsuUserExtends } from './types/user'
@@ -157,14 +157,14 @@ export class OsuFunnyService extends Service {
         return user[0]
     }
 
-    async getUser(platformId: string, username: string, userId?: string) {
+    async getUser(platformId: string, username: string, mode: number = 0) {
         const users = await this.ctx.database.get('osu_funny_user', {
             platform_id: platformId
         })
 
         const token = users?.[0].token ?? (await this.getDefaultToken())
 
-        return this.API.getV2User(username, token)
+        return this.API.getUser(username, token, numberToOsuMode(mode))
     }
 
     async getDefaultToken() {
