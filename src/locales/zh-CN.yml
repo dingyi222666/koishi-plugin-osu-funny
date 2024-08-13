@@ -52,8 +52,8 @@ commands:
 
                 {at} 推荐的谱面是：{name} {star}*
 
-                预计的 PP 为：{pp}。
-                提升概率为：{percent}%。
+                预计的 PP 为：{pp}
+                提升概率为：{percent}%
 
                 谱面地址：{beatmap}
 

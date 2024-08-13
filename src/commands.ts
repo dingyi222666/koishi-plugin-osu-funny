@@ -165,7 +165,7 @@ export function apply(ctx: Context, config: Config) {
 
             if (input == null) {
                 return session.text('.timeout', [
-                    h.image(beatmapset.covers.cover),
+                    h.image(beatmapset.covers.card),
                     beatmapset.title_unicode
                 ])
             }
@@ -179,12 +179,12 @@ export function apply(ctx: Context, config: Config) {
                     .includes(input.toLocaleLowerCase())
             ) {
                 return session.text('.success', [
-                    h.image(beatmapset.covers.cover),
+                    h.image(beatmapset.covers.card),
                     beatmapset.title_unicode
                 ])
             } else {
                 return session.text('.fail', [
-                    h.image(beatmapset.covers.cover),
+                    h.image(beatmapset.covers.card),
                     beatmapset.title_unicode
                 ])
             }
@@ -247,7 +247,7 @@ export function apply(ctx: Context, config: Config) {
             }
 
             return session.text('.beatmap-recommend', {
-                at: h('at', { id: session.userId }),
+                at: h.at(session.userId),
                 name:
                     recommendBeatmap.mapName +
                     ' ' +
