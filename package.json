@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-osu-funny",
   "description": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能...",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",

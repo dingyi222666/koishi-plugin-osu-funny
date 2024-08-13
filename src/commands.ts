@@ -41,7 +41,7 @@ export function apply(ctx: Context, config: Config) {
 
                 await recallMessage()
             },
-            1000 * 60 * 3
+            1000 * 60 * 2
         )
 
         // 轮询查询是否绑定成功
@@ -53,7 +53,6 @@ export function apply(ctx: Context, config: Config) {
                 return
             }
 
-            await recallMessage()
             interval()
             timeout()
 
@@ -68,6 +67,8 @@ export function apply(ctx: Context, config: Config) {
             }
 
             await session.send(msg)
+
+            await recallMessage()
         }, 100)
 
         await promise
@@ -128,8 +129,9 @@ export function apply(ctx: Context, config: Config) {
 
             if (user && !username) {
                 username = user.username
-                mode = mode ?? user.mode
             }
+
+            mode = mode ?? user.mode
 
             if (!username) {
                 return session.text('.no-username')
@@ -162,16 +164,29 @@ export function apply(ctx: Context, config: Config) {
             const input = await session.prompt(1000 * 60)
 
             if (input == null) {
-                return session.text('.timeout', [beatmapset.title_unicode])
+                return session.text('.timeout', [
+                    h.image(beatmapset.covers.cover),
+                    beatmapset.title_unicode
+                ])
             }
 
             if (
-                beatmapset.title.includes(input) ||
-                beatmapset.title_unicode.includes(input)
+                beatmapset.title
+                    .toLocaleLowerCase()
+                    .includes(input.toLocaleLowerCase()) ||
+                beatmapset.title_unicode
+                    .toLocaleLowerCase()
+                    .includes(input.toLocaleLowerCase())
             ) {
-                return session.text('.success', [beatmapset.title_unicode])
+                return session.text('.success', [
+                    h.image(beatmapset.covers.cover),
+                    beatmapset.title_unicode
+                ])
             } else {
-                return session.text('.fail', [beatmapset.title_unicode])
+                return session.text('.fail', [
+                    h.image(beatmapset.covers.cover),
+                    beatmapset.title_unicode
+                ])
             }
         })
 
@@ -232,7 +247,7 @@ export function apply(ctx: Context, config: Config) {
             }
 
             return session.text('.beatmap-recommend', {
-                at: h('quote', { id: session.messageId }),
+                at: h('at', { id: session.userId }),
                 name:
                     recommendBeatmap.mapName +
                     ' ' +
@@ -240,7 +255,7 @@ export function apply(ctx: Context, config: Config) {
                 star: Number(recommendBeatmap.difficulty).toFixed(2),
                 pp: Number(recommendBeatmap.predictPP).toFixed(2),
                 percent: Number(recommendBeatmap.passPercent * 100).toFixed(2),
-                cover: h.image(recommendBeatmap.mapCoverUrl, { cache: false }),
+                cover: h.image(recommendBeatmap.mapCoverUrl),
                 beatmap: recommendBeatmap.mapLink
             })
         })
