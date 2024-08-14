@@ -128,7 +128,7 @@ export function apply(ctx: Context, config: Config) {
         }
     )
 
-    ctx.command('osu-funny.guess-voice [user:string]')
+    ctx.command('osu-funny.guess-voice [user:text]')
         .option('type', '-t <t:number>')
         .action(async ({ session, options }, username) => {
             const selfId = await getBindingId(ctx, session)
@@ -137,10 +137,10 @@ export function apply(ctx: Context, config: Config) {
             let mode = options.type
 
             if (user && !username) {
-                username = user.username
+                username = user?.username ?? config.rootOsuId
             }
 
-            mode = mode ?? user.mode
+            mode = mode ?? user?.mode ?? 0
 
             if (!username) {
                 return session.text('.no-username')
@@ -199,7 +199,7 @@ export function apply(ctx: Context, config: Config) {
             }
         })
 
-    ctx.command('osu-funny.recommend [user:string]')
+    ctx.command('osu-funny.recommend [user:text]')
         .option('force', '-f <f:boolean>')
         .option('mods', '-m <m:string>')
         .option('type', '-t <t:number>')
@@ -214,8 +214,9 @@ export function apply(ctx: Context, config: Config) {
 
             if (user && !username) {
                 username = user.username
-                mode = mode ?? user.mode
             }
+
+            mode = mode ?? user?.mode ?? 3
 
             if (!username) {
                 return session.text('.no-username')
@@ -232,8 +233,8 @@ export function apply(ctx: Context, config: Config) {
             }
 
             const userId =
-                username === user.username
-                    ? user.user_id
+                username === user?.username
+                    ? user?.user_id
                     : (await ctx.osu_funny.getUser(selfId, username)).id
 
             const [recommendBeatmap, status] =
@@ -301,11 +302,11 @@ export function apply(ctx: Context, config: Config) {
 
             username = username ?? user?.username
 
-            const mode = options.type ?? user?.mode ?? 0
+            const mode = options.type
 
             try {
                 const osuUser = await ctx.osu_funny.getUser(
-                    session.selfId,
+                    selfId,
                     username,
                     mode
                 )

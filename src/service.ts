@@ -157,14 +157,18 @@ export class OsuFunnyService extends Service {
         return user[0]
     }
 
-    async getUser(platformId: string, username: string, mode: number = 0) {
+    async getUser(platformId: string, username: string, mode?: number) {
         const users = await this.ctx.database.get('osu_funny_user', {
             platform_id: platformId
         })
 
-        const token = users?.[0].token ?? (await this.getDefaultToken())
+        const token = users?.[0]?.token ?? (await this.getDefaultToken())
 
-        return this.API.getUser(username, token, numberToOsuMode(mode))
+        return this.API.getUser(
+            username,
+            token,
+            mode ? numberToOsuMode(mode) : undefined
+        )
     }
 
     async getDefaultToken() {
