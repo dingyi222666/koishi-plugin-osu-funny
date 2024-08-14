@@ -3,6 +3,7 @@ import { Config } from '.'
 import {
     formatTimeToDay,
     formatTimeToHours,
+    getBindingId,
     getDisplayOsuMode,
     withResolver
 } from './utils'
@@ -12,7 +13,7 @@ export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny', '一些有趣的 osu! 功能')
 
     ctx.command('osu-funny.bind').action(async ({ session }) => {
-        const selfId = session.selfId
+        const selfId = await getBindingId(ctx, session)
 
         const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
@@ -82,7 +83,7 @@ export function apply(ctx: Context, config: Config) {
     })
 
     ctx.command('osu-funny.unbind').action(async ({ session }) => {
-        const selfId = session.selfId
+        const selfId = await getBindingId(ctx, session)
 
         const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
@@ -130,7 +131,8 @@ export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny.guess-voice [user:string]')
         .option('type', '-t <t:number>')
         .action(async ({ session, options }, username) => {
-            const selfId = session.selfId
+            const selfId = await getBindingId(ctx, session)
+
             const user = await ctx.osu_funny.getUserFromDatabase(selfId)
             let mode = options.type
 
@@ -202,7 +204,8 @@ export function apply(ctx: Context, config: Config) {
         .option('mods', '-m <m:string>')
         .option('type', '-t <t:number>')
         .action(async ({ session, options }, username) => {
-            const selfId = session.selfId
+            const selfId = await getBindingId(ctx, session)
+
             const user = await ctx.osu_funny.getUserFromDatabase(selfId)
             let mode = options.type
             const mods = options.mods
@@ -269,7 +272,8 @@ export function apply(ctx: Context, config: Config) {
 
     ctx.command('osu-funny.set-mode <mode:number>').action(
         async ({ session }, mode) => {
-            const user = await ctx.osu_funny.getUserFromDatabase(session.selfId)
+            const selfId = await getBindingId(ctx, session)
+            const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
             if (!user) {
                 return session.text('not-bind')
@@ -279,10 +283,7 @@ export function apply(ctx: Context, config: Config) {
                 return session.text('.invalid-mode')
             }
 
-            const displayMode = await ctx.osu_funny.setMode(
-                session.selfId,
-                mode
-            )
+            const displayMode = await ctx.osu_funny.setMode(selfId, mode)
 
             return session.text('.current-mode', [displayMode])
         }
@@ -291,7 +292,8 @@ export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny.info [username:string]')
         .option('type', '-t <t:number>')
         .action(async ({ session, options }, username) => {
-            const user = await ctx.osu_funny.getUserFromDatabase(session.selfId)
+            const selfId = await getBindingId(ctx, session)
+            const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
             if (!user && !username) {
                 return session.text('not-bind')

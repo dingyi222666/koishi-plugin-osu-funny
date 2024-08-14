@@ -1,3 +1,4 @@
+import { Context, Session } from 'koishi'
 import { OsuMode, OsuModeString } from './types/database'
 
 // https://github.com/tc39/proposal-promise-with-resolvers
@@ -59,6 +60,18 @@ export function formatTimeToHours(time: number) {
     return time / 3600 > 1
         ? `${Math.floor(time / 3600)}h ${Math.floor((time % 3600) / 60)}m`
         : `${Math.floor(time / 60)}m`
+}
+
+export async function getBindingId(ctx: Context, session: Session) {
+    const bindings = await ctx.database.get('binding', {
+        platform: session.platform,
+        pid: session.userId
+    })
+
+    if (bindings.length === 1) {
+        return bindings[0]?.aid?.toString()
+    }
+    throw new Error('未绑定')
 }
 
 export function getDisplayOsuMode(mode: OsuModeString | number): string {
