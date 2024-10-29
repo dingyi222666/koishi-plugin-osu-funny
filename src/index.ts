@@ -80,4 +80,4 @@ export function apply(ctx: Context, config: Config) {
     )
 }
 
-export const inject = ['cache', 'database', 'server']
+export const inject = ['cache', 'database', 'server', 'puppeteer']

@@ -9,7 +9,8 @@ commands:
             timeout: '绑定超时，请重新绑定。'
             success: '已绑定到 {0}，默认设置为 {1} 游戏模式。如需更新游戏模式，请使用 `osu-funny.mode` 命令。'
             already-bind: '该账号已经绑定了一个 osu! 账号！请使用 `osu-funny.unbind` 来解绑。'
-            already-bind-v2: '该账号已经绑定了一个 osu! 账号！并且目前 v2 token 仍然有效。如需绑定其他账号，请先使用 `osu-funny.unbind` 来解绑。'
+            already-bind-v2: '该账号已经绑定了一个 osu! 账号！并且目前 v2 token 仍然有效。如需绑定其他账号，请回复 yes 来继续。'
+            cancel: '已取消绑定 osu! 账号。'
             error: '绑定时出现了错误。'
     osu-funny.unbind:
         description: 解绑一个 osu! 账号。
@@ -119,6 +120,13 @@ commands:
                 uid: {id}
                 interests: {interests}
 
+    osu-funny.screenshot:
+        description: 获取一个 osu! 账号的个人信息截图。
+        usage: osu-funny.screenshot [user:string]
+        examples: |-
+            osu-funny.screenshot peppy
+        messages:
+            no-user: '未指定用户。'
 
 not-bind: '你还没有绑定任何 osu! 账号。'
 unknown-error: '发生了未知错误。'

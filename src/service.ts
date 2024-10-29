@@ -193,12 +193,17 @@ export class OsuFunnyService extends Service {
         this.ctx.server.get('/osu-funny/oauth', async (koa) => {
             const { code, state } = koa.query
 
+            let selfUrl = this.config.selfUrl
+
+            if (selfUrl.length < 1) {
+                selfUrl = this.ctx.server.config.selfUrl
+            }
+
             const formData = new URLSearchParams({
                 grant_type: 'authorization_code',
                 client_id: this.config.clientId,
                 client_secret: this.config.clientSecret,
-                redirect_uri:
-                    this.ctx.server.config.selfUrl + '/osu-funny/oauth',
+                redirect_uri: selfUrl + '/osu-funny/oauth',
                 code: code as string
             })
 
@@ -215,7 +220,10 @@ export class OsuFunnyService extends Service {
                     }
                 )
             } catch (e) {
-                this.ctx.logger.error(e)
+                this.ctx.logger.error(e, formData.toString())
+                this._bindQueue.set(state as string, 'failed')
+
+                return
             }
 
             let success = false

@@ -5,9 +5,11 @@ import {
     formatTimeToHours,
     getBindingId,
     getDisplayOsuMode,
+    numberToOsuMode,
     withResolver
 } from './utils'
 import { OsuBeatmapset, OsuScore } from './types'
+import type {} from 'koishi-plugin-puppeteer'
 
 export function apply(ctx: Context, config: Config) {
     ctx.command('osu-funny', '一些有趣的 osu! 功能')
@@ -18,7 +20,12 @@ export function apply(ctx: Context, config: Config) {
         const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
         if (user) {
-            return session.text('.already-bind-v2')
+            await session.send(session.text('.already-bind-v2'))
+            const prompt = await session.prompt()
+
+            if (!prompt || prompt.toLowerCase() !== 'yes') {
+                return session.text('.cancel')
+            }
         }
 
         const url = ctx.osu_funny.getBindUrl(selfId)
@@ -65,6 +72,7 @@ export function apply(ctx: Context, config: Config) {
             timeout()
 
             let msg: string
+
             if (typeof bindStatus !== 'string') {
                 msg = session.text('.success', [
                     bindStatus.username,
@@ -296,11 +304,11 @@ export function apply(ctx: Context, config: Config) {
             const selfId = await getBindingId(ctx, session)
             const user = await ctx.osu_funny.getUserFromDatabase(selfId)
 
-            if (!user && !username) {
+            username = username ?? user?.username
+
+            if (!username) {
                 return session.text('not-bind')
             }
-
-            username = username ?? user?.username
 
             const mode = options.type
 
@@ -324,6 +332,71 @@ export function apply(ctx: Context, config: Config) {
                         )
                     })
                 )
+            } catch (e) {
+                ctx.logger.error(e)
+                return session.text('unknown-error')
+            }
+        })
+
+    ctx.command('osu-funny.screenshot [username:string]')
+        .option('type', '-t <t:number>')
+        .action(async ({ session, options }, username) => {
+            const selfId = await getBindingId(ctx, session)
+
+            const user = await ctx.osu_funny.getUserFromDatabase(selfId)
+
+            username = username ?? user?.username
+
+            if (!username) {
+                return session.text('not-bind')
+            }
+
+            const mode = options.type ?? undefined
+
+            try {
+                const osuUser = await ctx.osu_funny.getUser(
+                    selfId,
+                    username,
+                    mode
+                )
+
+                let homeUrl = `https://osu.ppy.sh/users/${osuUser.id}`
+
+                if (mode) {
+                    homeUrl += `#${numberToOsuMode(mode)}`
+                }
+
+                const page = await ctx.puppeteer.page()
+                await page.setUserAgent(
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                )
+
+                await page.goto(homeUrl, {
+                    waitUntil: 'networkidle2'
+                })
+
+                // hide player
+                await page.evaluate(() => {
+                    const player =
+                        document.querySelector<HTMLElement>('#main-player')
+                    if (player) {
+                        player.style.display = 'none'
+                    }
+                })
+
+                const app = await page.$(
+                    '.osu-page.osu-page--generic-compact > div:first-child'
+                )
+                // screenshot
+
+                const clip = await app.boundingBox()
+                const screenshot = await page.screenshot({ clip })
+
+                ctx.setTimeout(() => {
+                    page.close()
+                }, 1000)
+
+                return h.image(screenshot, 'image/png')
             } catch (e) {
                 ctx.logger.error(e)
                 return session.text('unknown-error')
