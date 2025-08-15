@@ -109,8 +109,7 @@ export default class OsuAPI {
 
     async getMapBackground(mapId: string) {
         const urls = [
-            `https://api.osu.direct/media/background/${mapId}`,
-            `https://subapi.nerinyan.moe/bg/${mapId}`
+            `https://assets.ppy.sh/beatmaps/${mapId}/covers/cover.jpg`
         ]
         const content = await this.getContentByUrls(urls, 'file')
         return content as string
