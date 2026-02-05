@@ -45,6 +45,7 @@ export class OsuFunnyService extends Service {
 
         await this.ctx.database.upsert('osu_funny_user', [
             {
+                username: user[0].username,
                 platform_id: platformId,
                 mode
             }
