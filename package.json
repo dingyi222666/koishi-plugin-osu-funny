@@ -1,65 +1,65 @@
 {
-  "name": "koishi-plugin-osu-funny",
-  "description": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能...",
-  "version": "0.2.0",
-  "main": "lib/index.cjs",
-  "module": "lib/index.mjs",
-  "typings": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+    "name": "koishi-plugin-osu-funny",
+    "description": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能...",
+    "version": "0.2.1",
+    "main": "lib/index.cjs",
+    "module": "lib/index.mjs",
+    "typings": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./lib/index.mjs",
+            "require": "./lib/index.cjs",
+            "types": "./lib/index.d.ts"
+        },
+        "./package.json": "./package.json"
     },
-    "./package.json": "./package.json"
-  },
-  "type": "module",
-  "files": [
-    "lib",
-    "dist"
-  ],
-  "license": "MIT",
-  "keywords": [
-    "chatbot",
-    "koishi",
-    "plugin"
-  ],
-  "peerDependencies": {
-    "@koishijs/cache": "^2.1.0",
-    "@koishijs/plugin-server": "^3.2.7",
-    "koishi": "^4.18.9"
-  },
-  "devDependencies": {
-    "esbuild": "^0.20.2",
-    "esbuild-register": "^3.6.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.2",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-promise": "^7.2.1",
-    "koishi-plugin-puppeteer": "^3.9.0"
-  },
-  "koishi": {
-    "description": {
-      "zh": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能..."
+    "type": "module",
+    "files": [
+        "lib",
+        "dist"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "chatbot",
+        "koishi",
+        "plugin"
+    ],
+    "peerDependencies": {
+        "@koishijs/cache": "^2.1.0",
+        "@koishijs/plugin-server": "^3.2.7",
+        "koishi": "^4.18.9"
     },
-    "service": {
-      "required": [
-        "database",
-        "server",
-        "cache"
-      ]
+    "devDependencies": {
+        "esbuild": "^0.20.2",
+        "esbuild-register": "^3.6.0",
+        "eslint": "^8.57.1",
+        "eslint-config-prettier": "^9.1.2",
+        "eslint-config-standard": "^17.1.0",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-n": "^16.6.2",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-promise": "^7.2.1",
+        "koishi-plugin-puppeteer": "^3.9.0"
+    },
+    "koishi": {
+        "description": {
+            "zh": "一些好玩的和 osu! 有关功能的插件，陆续推出更多功能..."
+        },
+        "service": {
+            "required": [
+                "database",
+                "server",
+                "cache"
+            ]
+        }
+    },
+    "bugs": {
+        "url": "https://github.com/dingyi222666/koishi-plugin-osu-funny/issues"
+    },
+    "homepage": "https://github.com/dingyi222666/koishi-plugin-osu-funny#readme",
+    "repository": "git@github.com:dingyi222666/osu-funny.git",
+    "author": "dingyi222666 <dingyi222666@foxmail.com>",
+    "dependencies": {
+        "@isaacs/ttlcache": "^1.4.1"
     }
-  },
-  "bugs": {
-    "url": "https://github.com/dingyi222666/koishi-plugin-osu-funny/issues"
-  },
-  "homepage": "https://github.com/dingyi222666/koishi-plugin-osu-funny#readme",
-  "repository": "git@github.com:dingyi222666/osu-funny.git",
-  "author": "dingyi222666 <dingyi222666@foxmail.com>",
-  "dependencies": {
-    "@isaacs/ttlcache": "^1.4.1"
-  }
 }
