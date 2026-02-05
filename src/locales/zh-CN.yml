@@ -92,7 +92,7 @@ commands:
             osu-funny.set-mode 2 # 设置为 ctb
             osu-funny.set-mode 3 # 设置为 mania
         messages:
-            set-mode-success: '已设置默认游戏模式为 {0}。'
+            current-mode: '已设置默认游戏模式为 {0}。'
             invalid-mode: '输入了无效的游戏模式。'
             not-bind: '你还没有绑定任何 osu! 账号。'
 
